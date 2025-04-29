@@ -1,36 +1,40 @@
 #include <Arduino.h>
 /*
- * This ESP32 code is created by esp32io.com
- *
- * This ESP32 code is released in the public domain
- *
- * For more detail (instruction and wiring diagram), visit https://esp32io.com/tutorials/esp32-mqtt
- */
+* This ESP32 code is created by esp32io.com
+*
+* This ESP32 code is released in the public domain
+*
+* For more detail (instruction and wiring diagram), visit https://esp32io.com/tutorials/esp32-mqtt
+*/
 
- #include <WiFi.h>
- #include <MQTTClient.h>
- #include <ArduinoJson.h>
- 
- const char WIFI_SSID[] = "YOUR_WIFI_SSID";     // CHANGE TO YOUR WIFI SSID
- const char WIFI_PASSWORD[] = "YOUR_WIFI_PASSWORD";  // CHANGE TO YOUR WIFI PASSWORD
- 
- const char MQTT_BROKER_ADRRESS[] = "test.mosquitto.org";  // CHANGE TO MQTT BROKER'S ADDRESS
- const int MQTT_PORT = 1883;
- const char MQTT_CLIENT_ID[] = "YOUR-NAME-esp32-001";  // CHANGE IT AS YOU DESIRE
- const char MQTT_USERNAME[] = "";                        // CHANGE IT IF REQUIRED, empty if not required
- const char MQTT_PASSWORD[] = "";                        // CHANGE IT IF REQUIRED, empty if not required
- 
- // The MQTT topics that ESP32 should publish/subscribe
- const char PUBLISH_TOPIC[] = "YOUR-NAME-esp32-001/loopback";    // CHANGE IT AS YOU DESIRE
- const char SUBSCRIBE_TOPIC[] = "YOUR-NAME-esp32-001/loopback";  // CHANGE IT AS YOU DESIRE
- 
- const int PUBLISH_INTERVAL = 5000;  // 5 seconds
- 
- WiFiClient network;
- MQTTClient mqtt = MQTTClient(256);
- 
- unsigned long lastPublishTime = 0;
- 
+#include <WiFi.h>
+#include <MQTTClient.h>
+#include <ArduinoJson.h>
+
+const char WIFI_SSID[] = "YOUR_WIFI_SSID";     // CHANGE TO YOUR WIFI SSID
+const char WIFI_PASSWORD[] = "YOUR_WIFI_PASSWORD";  // CHANGE TO YOUR WIFI PASSWORD
+
+const char MQTT_BROKER_ADRRESS[] = "test.mosquitto.org";  // CHANGE TO MQTT BROKER'S ADDRESS
+const int MQTT_PORT = 1883;
+const char MQTT_CLIENT_ID[] = "YOUR-NAME-esp32-001";  // CHANGE IT AS YOU DESIRE
+const char MQTT_USERNAME[] = "";                        // CHANGE IT IF REQUIRED, empty if not required
+const char MQTT_PASSWORD[] = "";                        // CHANGE IT IF REQUIRED, empty if not required
+
+// The MQTT topics that ESP32 should publish/subscribe
+const char PUBLISH_TOPIC[] = "YOUR-NAME-esp32-001/loopback";    // CHANGE IT AS YOU DESIRE
+const char SUBSCRIBE_TOPIC[] = "YOUR-NAME-esp32-001/loopback";  // CHANGE IT AS YOU DESIRE
+
+const int PUBLISH_INTERVAL = 5000;  // 5 seconds
+
+WiFiClient network;
+MQTTClient mqtt = MQTTClient(256);
+
+unsigned long lastPublishTime = 0;
+
+void connectToMQTT();
+void sendToMQTT();
+void messageHandler(String &topic, String &payload);
+
 void setup() {
   Serial.begin(9600);
 
@@ -91,7 +95,7 @@ void connectToMQTT() {
 }
 
 void sendToMQTT() {
-  StaticJsonDocument<200> message;
+  JsonDocument message;
   message["timestamp"] = millis();
   message["data"] = analogRead(0);  // Or you can read data from other sensors
   char messageBuffer[512];
@@ -112,4 +116,3 @@ void messageHandler(String &topic, String &payload) {
   Serial.println("- payload:");
   Serial.println(payload);
 }
- 
